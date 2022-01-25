@@ -401,7 +401,7 @@ async def SetConfig(key, x, y):
 
 def gui_input():
     global DEVICE_IP
-    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text = DEVICE_IP, key='-IN-')] ,[sg.Button("Start")]]
+    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text=DEVICE_IP, key='-IN-')] ,[sg.Button("Start")]]
 
     ###Building Window
     window = sg.Window('Enter/Verify IP Address for iDevice', layout)
