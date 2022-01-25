@@ -19,5 +19,19 @@ Linked and dependant on this project... https://github.com/xuan32546/IOS13-Simul
 1. Install python dependencies.
 `pip install -r requirements.txt`
 2. `cd /path/to/ZXtouch\ CoDm\ Client/`
-3. `python3 main.py <IP Address of device>` # Exclude the IP if connected via USB to Windows w/ Itunes installed (will use 127.0.0.1).  
+3. A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".
+3. `python3 main.py <IP Address of device>` # Exclude the IP if connected via USB to Windows w/ Itunes installed (will use 127.0.0.1).
 
+## How to set keys
+
+### Map Keys
+1. Press "k" to enter key programming mode.
+2. Press the key you want to program, then click the left mouse button once on the location for the key.
+3. Confirmation of the programmed key will be signified by a blue dot and the key next to it on the background image and shown in the console output.
+4. Press another key you want to program and follow steps 2-3 again or press "k" again to exit key programming mode.
+
+### Map Joystick Center
+1. Press "j" to enter joystick programming mode.
+2. The center of the joystick will already be selected so all you need to do is click the left mouse button in the center of your games joystick location.
+3. Confirmation of joystick center will be signified by a blue dot and 'J_CENTER' on the background image and shown in the console output.
+4. Press "j" again to exit key programming mode.
