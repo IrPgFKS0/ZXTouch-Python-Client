@@ -1,11 +1,9 @@
 # ZXTouch-Python-Client
-A generic zxtouch python client for Windows/Mac/Linux for keyboard gaming (CoDm, PUBG, etc...)
-<p></p>
+A generic zxtouch python client for Windows/Mac/Linux for keyboard gaming (CoDm, PUBG, etc...)<p></p>
 If this helped you out, Buy me a coffee [here](https://buymeacoffee.com/modderan)
 
 ## Description
-Linked and dependant on this project... https://github.com/xuan32546/IOS13-SimulateTouch
-<p></p>
+Linked and dependant on this project... https://github.com/xuan32546/IOS13-SimulateTouch<p></p>
 This is a client that maps keyboard/mouse functionality for any game.  You will need to modify coordinates `config.json` file for your specific game, but out of the box this will support CoDm on iPhone11 with the attached layout.
 
 ## Features
