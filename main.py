@@ -51,7 +51,7 @@ log.handlers = [hdlr]
 # Import or load image path
 IMG = f"{CWD}{LOC}game_image.png"
 if not path.isfile(IMG):
-    layout = [[sg.T("")], [sg.Text("Choose Image (no compressed images): "), sg.Input(), sg.FileBrowse(key="-IN-")] ,[sg.Button("Submit")]]
+    layout = [[sg.T("")], [sg.Text("Choose Image (no compressed images): "), sg.Input(), sg.FileBrowse(key="-IN-")] ,[sg.Button("Submit", bind_return_key=True)]]
 
     ###Building Window
     window = sg.Window('ZTC File Browser', layout)
@@ -401,7 +401,7 @@ async def SetConfig(key, x, y):
 
 def gui_input():
     global DEVICE_IP
-    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text=DEVICE_IP, key='-IN-')] ,[sg.Button("Start")]]
+    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text=DEVICE_IP, key='-IN-')] ,[sg.Button("Start", bind_return_key=True)]]
 
     ###Building Window
     window = sg.Window('Enter/Verify IP Address for iDevice', layout)
