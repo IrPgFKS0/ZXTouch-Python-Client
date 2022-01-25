@@ -24,16 +24,7 @@ from PIL import Image
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "1"
 import pygame
 
-__version__ = '0.1.2'
-
-# Setup logging
-log = logging.getLogger(f'ZXTouch CoDm Client v{__version__}')
-log.setLevel(logging.INFO)
-# log.setLevel(logging.DEBUG)
-hdlr = logging.StreamHandler()
-hdlr.setFormatter(logging.Formatter("[%(asctime)s %(name)s/%(levelname)s] %(message)s"))
-log.handlers = [hdlr]
-
+__version__ = '0.1.3'
 
 """
 This section will need to be customized to your device/preferences
@@ -46,13 +37,24 @@ try:
 except IndexError:
     pass
 
+# Setup logging
+log = logging.getLogger(f'ZXTouch CoDm Client v{__version__}')
+log.setLevel(logging.INFO)
+hdlr = logging.StreamHandler()
+hdlr.setFormatter(logging.Formatter("[%(asctime)s %(name)s/%(levelname)s] %(message)s"))
+log.handlers = [hdlr]
+# Uncomment to enable file logging.
+# fhdlr = logging.FileHandler(f"{CWD}{LOC}logs{LOC}events.log", encoding="utf-8")
+# fhdlr.setFormatter(logging.Formatter("[%(asctime)s %(name)s/%(levelname)s] %(message)s"))
+# log.handlers.append(fhdlr)
+
 # Import or load image path
 IMG = f"{CWD}{LOC}game_image.png"
 if not path.isfile(IMG):
-    layout = [[sg.T("")], [sg.Text("Choose Image (no compressed images): "), sg.Input(key="-IN2-" ,change_submits=True)], [sg.FileBrowse(key="-IN-")] ,[sg.Button("Submit")]]
+    layout = [[sg.T("")], [sg.Text("Choose Image (no compressed images): "), sg.Input(), sg.FileBrowse(key="-IN-")] ,[sg.Button("Submit")]]
 
     ###Building Window
-    window = sg.Window('ZTC File Browser', layout, size=(600,150))
+    window = sg.Window('ZTC File Browser', layout)
 
     while True:
         event, values = window.read()
@@ -397,6 +399,25 @@ async def SetConfig(key, x, y):
     log.info('Successfully wrote changes to file.')
 
 
+def gui_input():
+    global DEVICE_IP
+    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text = DEVICE_IP, key='-IN-')] ,[sg.Button("Start")]]
+
+    ###Building Window
+    window = sg.Window('Enter/Verify IP Address for iDevice', layout)
+
+    while True:
+        event, values = window.read()
+        if event in (sg.WIN_CLOSED, "Exit"):
+            exit()
+        # Import image file to CWD
+        elif event == "Start":
+            DEVICE_IP = values["-IN-"]
+            log.info(f'Set device IP to {DEVICE_IP}.')
+            window.close()
+            break
+
+
 def write_json(data, filename):
     with FileLock(f"{CWD}{LOC}{filename}.json.lock"):
         with open(f"{CWD}{LOC}{filename}.json", 'w') as file:
@@ -420,6 +441,10 @@ def create_aio_loop():
 
 if __name__ == '__main__':
     s = socket.socket()
+    
+    # Call user input
+    gui_input()
+
     s.connect((DEVICE_IP, 6000))  # connect to the tweak
     sleep(0.2)  # please sleep after connection.
 
