@@ -1,0 +1,5 @@
+filelock==3.4.0
+pygame==2.1.2
+PySimpleGUI==4.56.0
+ujson==4.0.2
+uvloop==0.15.2
