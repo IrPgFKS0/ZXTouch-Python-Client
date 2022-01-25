@@ -176,10 +176,7 @@ async def input_monitor():
                     clicked = 0
 
             if pm and pk and event.button == 1 and clicked > 0:
-                pygame.draw.circle(screen, (0, 0, 255),[float(event.pos[0]), float(event.pos[1])], 10, 10)
-                text_surface = font.render(pk, 0, (0, 0, 0))
-                screen.blit(text_surface, dest=(float(event.pos[0]), float(event.pos[1])))
-                pygame.display.update()
+                await draw(pk, (float(event.pos[0]), float(event.pos[1])), 10, (0, 0, 255))
                 # Program the previously selected key
                 await SetConfig(pk, f"{'%04d' % (SCREEN_SIZE[1]-event.pos[1])}0", f"{'%04d' % event.pos[0]}0")
                 pk = None
@@ -215,6 +212,9 @@ async def input_monitor():
                     log.info('Entering key program mode (press "k" or "j" to exit)...')
                     print('\nPress any key/mouse button to program it...')
                     pm = 1
+                    await erase()
+                    for key in COORDS:
+                        await draw(key, (float(COORDS[key][2])/10, SCREEN_SIZE[1]-float(COORDS[key][1])/10), 20, (0, 255, 0))
             elif event.key == pygame.K_j:
                 if pm:
                     log.info('Exiting joystick program mode...')
@@ -224,6 +224,7 @@ async def input_monitor():
                     print("\nProgramming joystick center, left click mouse on joystick center position: J_CENTER")
                     pm = 1
                     pk = 'J_CENTER'
+                    await erase()
 
             if pm and event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE}:
                 if event.key in {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
@@ -251,9 +252,11 @@ async def input_monitor():
                     if log.getEffectiveLevel() == 10:
                         log.info('Debugging mode disabled!')
                         log.setLevel(logging.INFO)
+                        await erase()
                     else:
                         log.info('Debugging mode enabled, press "p" to disable')
                         log.setLevel(logging.DEBUG)
+                        await erase()
                 if event.key == pygame.K_ESCAPE:
                     log.info('Resetting finger indices')
                     await reset_fingers()
@@ -331,10 +334,20 @@ async def sender(key, data, x, y):
         if key is not None:
             # print coordnates in portrait mode for troubleshooting
             log.debug(f"Sent to iDevice (Portrait Mode): {data}, {x}, {y}")
-            text_surface = font.render(key, 0, (0, 0, 0))
-            screen.blit(text_surface, dest=(float(y)/10, SCREEN_SIZE[1]-float(x)/10))
-        pygame.draw.circle(screen, (0, 255, 0),[float(y)/10, SCREEN_SIZE[1]-float(x)/10], 5, 5)
-        pygame.display.update()
+        await draw(key, (float(y)/10, SCREEN_SIZE[1]-float(x)/10), 5, (0, 255, 0))
+
+
+async def draw(key, dst, size, color):
+    pygame.draw.circle(screen, color,dst, size, size)
+    if key is not None:
+        text_surface = font.render(key, 0, (0, 0, 0))
+        screen.blit(text_surface, dest=dst)
+    pygame.display.update()
+
+
+async def erase():
+    screen.blit(background, (0,0))
+    pygame.display.update()
 
 
 async def reset_fingers():
