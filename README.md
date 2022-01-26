@@ -17,11 +17,17 @@ This is a client that maps keyboard/mouse functionality for any game.  You will 
 
 ## How to use
 1. Install python dependencies.
-```pip install -r requirements.txt```
+```
+pip install -r requirements.txt
+```
 2. Change into the ZXTouch Client directory.
-```cd /path/to/ZXtouch\ CoDm\ Client/```
+```
+cd /path/to/ZXtouch\ CoDm\ Client/
+```
 3. A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".
-```python3 main.py <IP Address of device> # Exclude the IP if connected via USB to Windows w/ Itunes installed (will use 127.0.0.1)```
+```
+python3 main.py <IP Address of device> # Exclude the IP if connected via USB to Windows w/ Itunes installed (will use 127.0.0.1)
+```
 
 ## How to set keys
 
