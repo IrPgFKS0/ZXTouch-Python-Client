@@ -10,10 +10,14 @@ This is a client that maps keyboard/mouse functionality for any game.  You will 
 * Functional resolution coordinate mapping and realtime plotting (via debug mode).
 * Screen input locking (FPS).
 * Importable screenshot of actual layout for button mapping (similar to ZXTouch.net site).
-* No need to login to a website to run coordinate as you need to plot coordinates directing in script.
-* Buttons are already mapped and working for iPhone XR/11 (828x1792) resolution (see screenshot for working mappings)
+* Automatic screen size calculations (based on uploaded image size).
+* No need to login to a website to run coordinate as this is stored locally to the script.
+* Buttons are already mapped and working for iPhone XR/11 (1792x828) resolution (see screenshot for working mappings).
+* Button programming and joystick centering mode available for your custom layout.
 * Fully working on OSX Big Sur, should also work on windows, but have not tested.
 * Will likely need to input device IP (127.0.0.1 did not work for me).
+
+![layout](button_layout.png)
 
 ## Usage
 1. **Install python dependencies.**
