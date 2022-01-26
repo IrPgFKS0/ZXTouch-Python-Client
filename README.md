@@ -20,14 +20,14 @@ This is a client that maps keyboard/mouse functionality for any game.  You will 
 ![layout](button_layout.png)
 
 ## Usage
-1. **Install python dependencies.**
+1. **Change into the ZXTouch Client directory.**
 ```bash
-pip install -r requirements.txt
+cd /path/to/ZXtouch-CoDm-Client/
 ```
 
-2. **Change into the ZXTouch Client directory.**
+2. **Install python dependencies.**
 ```bash
-cd /path/to/ZXtouch\ CoDm\ Client/
+pip install -r requirements.txt
 ```
 
 3. **Launch the program via a terminal or cmd window (you can exclude the IP if connected via USB to Windows w/ Itunes installed "127.0.0.1" will be used)**
