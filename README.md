@@ -37,7 +37,7 @@ python3 main.py <IP Address of device>
 
 4. **A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".**
 
-![layout](images/file_popup_.png)
+![layout](images/file_popup.png)
 
 
 ## How to set keys
