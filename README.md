@@ -11,6 +11,7 @@ This is a client that maps keyboard/mouse functionality for any game.  You will 
 * Screen input locking (FPS).
 * Importable screenshot of actual layout for button mapping (similar to ZXTouch.net site).
 * Automatic screen size calculations (based on uploaded image size).
+* Set a custom window resolution for your computer monitor (which is different than your iDevice).
 * No need to login to a website to run coordinate as this is stored locally to the script.
 * Buttons are already mapped and working for iPhone XR/11 (1792x828) resolution (see screenshot for working mappings).
 * Button programming and joystick centering mode available for your custom layout.
