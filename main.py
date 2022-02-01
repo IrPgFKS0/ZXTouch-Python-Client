@@ -83,7 +83,9 @@ TOUCH_DOWN = '1'
 TOUCH_MOVE = '2'
 # Set initial Coorinates and screen size for buttons and mouse operations.
 img=Image.open(IMG)
+X_PER, Y_PER, X_INV, Y_INV = 1, 1, 1, 1
 SCREEN_SIZE = img.size
+CUST_RES = SCREEN_SIZE
 log.info(f'Image "{IMG}" loaded and screen size set to {SCREEN_SIZE}.')
 
 # Read config file, file format is ['FINGER_IDX', 'X', 'Y'] (remember these are portrait coordinates)
@@ -168,7 +170,7 @@ async def input_monitor():
             except KeyError:
                 pass
             log.debug(f"Current Mouse Button Pressed: {event.button} ({key})")
-            log.debug(f"Mouse Clicked Screen Position (Portrait Coordinates): {(SCREEN_SIZE[1]-event.pos[1], event.pos[0])}")
+            log.debug(f"Mouse Clicked Screen Position (Portrait Coordinates): {(SCREEN_SIZE[1]-(event.pos[1] * Y_INV), event.pos[0] * X_INV)}")
 
             # Program mouse buttons
             if pm and not pk:
@@ -178,9 +180,9 @@ async def input_monitor():
                     clicked = 0
 
             if pm and pk and event.button == 1 and clicked > 0:
-                await draw(pk, (float(event.pos[0]), float(event.pos[1])), 10, (0, 0, 255))
+                await draw(0, pk, (float(event.pos[0]), float(event.pos[1])), 10, (0, 0, 255))
                 # Program the previously selected key
-                await SetConfig(pk, f"{'%04d' % (SCREEN_SIZE[1]-event.pos[1])}0", f"{'%04d' % event.pos[0]}0")
+                await SetConfig(pk, f"{'%04d' % (SCREEN_SIZE[1]-(event.pos[1] * Y_INV))}0", f"{'%04d' % (event.pos[0] * X_INV)}0")
                 pk = None
                 print('\nPress any key/mouse button to program it...')
             elif event.button == 1:
@@ -216,7 +218,7 @@ async def input_monitor():
                     pm = 1
                     await erase()
                     for key in COORDS:
-                        await draw(key, (float(COORDS[key][2])/10, SCREEN_SIZE[1]-float(COORDS[key][1])/10), 20, (0, 255, 0))
+                        await draw(1, key, (float(COORDS[key][2])/10, SCREEN_SIZE[1]-float(COORDS[key][1])/10), 20, (0, 255, 0))
             elif event.key == pygame.K_j:
                 if pm:
                     log.info('Exiting joystick program mode...')
@@ -336,11 +338,13 @@ async def sender(key, data, x, y):
         if key is not None:
             # print coordnates in portrait mode for troubleshooting
             log.debug(f"Sent to iDevice (Portrait Mode): {data}, {x}, {y}")
-        await draw(key, (float(y)/10, SCREEN_SIZE[1]-float(x)/10), 5, (0, 255, 0))
+        await draw(1, key, (float(y)/10, SCREEN_SIZE[1]-float(x)/10), 5, (0, 255, 0))
 
-
-async def draw(key, dst, size, color):
-    pygame.draw.circle(screen, color,dst, size, size)
+async def draw(correction_flag, key, screen_size, size, color):
+    dst = screen_size
+    if correction_flag:
+        dst = (screen_size[0] * X_PER, screen_size[1] * Y_PER)
+    pygame.draw.circle(screen, color, dst, size, size)
     if key is not None:
         text_surface = font.render(key, 0, (0, 0, 0))
         screen.blit(text_surface, dest=dst)
@@ -400,8 +404,8 @@ async def SetConfig(key, x, y):
 
 
 def gui_input():
-    global DEVICE_IP
-    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text=DEVICE_IP, key='-IN-')] ,[sg.Button("Start", bind_return_key=True)]]
+    global DEVICE_IP, CUST_RES, X_PER, Y_PER, X_INV, Y_INV
+    layout = [[sg.T("")], [sg.Text("IP address: "), sg.Input(default_text=DEVICE_IP, key='-IN-')], [sg.Text("Custom Resolution: "), sg.Input(default_text=SCREEN_SIZE[0], size=20, key='-X-'), sg.Input(default_text=SCREEN_SIZE[1], size=20, key='-Y-')], [sg.Button("Start", bind_return_key=True)]]
 
     ###Building Window
     window = sg.Window('Enter/Verify IP Address for iDevice', layout)
@@ -413,7 +417,13 @@ def gui_input():
         # Import image file to CWD
         elif event == "Start":
             DEVICE_IP = values["-IN-"]
+            CUST_RES = (int(values["-X-"]), int(values["-Y-"]))
+            X_PER = CUST_RES[0] / SCREEN_SIZE[0]
+            Y_PER = CUST_RES[1] / SCREEN_SIZE[1]
+            X_INV = SCREEN_SIZE[0] / CUST_RES[0]
+            Y_INV = SCREEN_SIZE[1] / CUST_RES[1]
             log.info(f'Set device IP to {DEVICE_IP}.')
+            log.info(f'Set window resolution to {CUST_RES}.')
             window.close()
             break
 
@@ -452,10 +462,10 @@ if __name__ == '__main__':
     pygame.init()
 
     # Creating display window taken screenshot (no login required)
-    screen = pygame.display.set_mode(SCREEN_SIZE)
+    screen = pygame.display.set_mode(CUST_RES)
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
     background = pygame.image.load(IMG).convert()
-    background = pygame.transform.scale(background, SCREEN_SIZE)
+    background = pygame.transform.scale(background, CUST_RES)
     screen.blit(background, (0,0))
     pygame.display.update()
     pygame.mouse.set_visible(True)
