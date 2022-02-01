@@ -29,6 +29,9 @@ cd /path/to/ZXtouch-CoDm-Client/
 2. **Install python dependencies.**
 ```bash
 pip install -r requirements.txt
+
+# On windows use
+pip install --no-deps -r requirements.txt
 ```
 
 3. **Launch the program via a terminal or cmd window (you can exclude the IP if connected via USB to Windows w/ Itunes installed "127.0.0.1" will be used)**
