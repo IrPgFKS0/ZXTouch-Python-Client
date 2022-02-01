@@ -35,7 +35,11 @@ pip install -r requirements.txt
 python3 main.py <IP Address of device>
 ```
 
-4. **A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".**
+4. **A popup window will allow then allow you to verify/enter an IP address and also set a custom window resolution (if you computer res is lower than your iDevice)**
+
+![cust_res](images/custom_res.png)
+
+5. **A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".**
 
 ![layout](images/file_popup.png)
 
