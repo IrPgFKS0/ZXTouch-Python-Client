@@ -22,6 +22,7 @@ from PIL import Image
 
 # Supress SDL welcome prompt
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "1"
+environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
 import pygame
 
 __version__ = '0.1.3'
@@ -462,7 +463,8 @@ if __name__ == '__main__':
     pygame.init()
 
     # Creating display window taken screenshot (no login required)
-    screen = pygame.display.set_mode(CUST_RES)
+    flags = pygame.BLEND_PREMULTIPLIED
+    screen = pygame.display.set_mode(CUST_RES, flags)
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
     background = pygame.image.load(IMG).convert()
     background = pygame.transform.scale(background, CUST_RES)
