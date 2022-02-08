@@ -34,16 +34,22 @@ pip install -r requirements.txt
 pip install --no-deps -r requirements.txt
 ```
 
-3. **Launch the program via a terminal or cmd window (you can exclude the IP if connected via USB to Windows w/ Itunes installed "127.0.0.1" will be used)**
+3. **Make a new config file using the template provided**
+```
+cd /path/to/ZXtouch-CoDm-Client/
+cp config.json.example config.json
+```
+
+4. **Launch the program via a terminal or cmd window (you can exclude the IP if connected via USB to Windows w/ Itunes installed "127.0.0.1" will be used)**
 ```
 python3 main.py <IP Address of device>
 ```
 
-4. **A popup window will allow then allow you to verify/enter an IP address and also set a custom window resolution (if you computer res is lower than your iDevice)**
+5. **A popup window will allow then allow you to verify/enter an IP address and also set a custom window resolution (if you computer res is lower than your iDevice)**
 
 ![cust_res](images/custom_res.png)
 
-5. **A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".**
+6. **A file browser box will pop up the first time you run the script asking for a screen shot of you game button layout (ensure this is a non compressed image), select the file and click "submit".**
 
 ![layout](images/file_popup.png)
 
@@ -61,3 +67,18 @@ python3 main.py <IP Address of device>
 2. The center of the joystick will already be selected so all you need to do is click the left mouse button in the center of your games joystick location.
 3. Confirmation of joystick center will be signified by a blue dot and `J_CENTER` on the background image and shown in the console output.
 4. Press `j` again to exit key programming mode.
+
+
+## FAQ
+
+### I see major lag when I lock input to the window ("l").
+> This can be caused by a high polling rate and DPI configuration on your mouse, if you have a gaming mouse/keyboard setup, try to lower the polling rate to 125 (8ms) and DPI ~900.
+
+### How do I delete keys?
+> I will add a way to delete keys, but for now you can manage the keys manually in the `config.json` file.
+
+### When I rotate my screen the button mappings are wrong.
+> Currently the script does not account for flipped or rotated landscape orientation, you will need to keep it oriented in one direction until I update the script to allow for rotation.
+
+### I have issues installing package "uvloop" on windows.
+> This package is not required, but on systems that support it this will provide a performance gain in CPU tasks making the process smoother.
