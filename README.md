@@ -86,10 +86,10 @@ python3 main.py <IP Address of device>
 
 ## Feature Requests
 
-### Map the same button to multiple coordinates
+* **Map the same button to multiple coordinates**
 
-### Support any landscape rotation
+* **Support any landscape rotation**
 
-### Add ability to delete keys
+* **Add ability to delete keys**
 
-### Support custom FPS centers and aim movement without having to modify the `config.json` file.
+* **Support custom FPS centers and aim movement without having to modify the `config.json` file.**
