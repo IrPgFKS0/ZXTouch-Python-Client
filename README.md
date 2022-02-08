@@ -92,4 +92,4 @@ python3 main.py <IP Address of device>
 
 * **Add ability to delete keys**
 
-* **Support custom FPS centers and aim movement without having to modify the `config.json` file.**
+* **Support custom FPS center and aim movement without having to modify the `config.json` file.**
