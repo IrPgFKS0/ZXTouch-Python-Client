@@ -84,8 +84,10 @@ TOUCH_DOWN = '1'
 TOUCH_MOVE = '2'
 # Set initial Coorinates and screen size for buttons and mouse operations.
 img=Image.open(IMG)
-X_PER, Y_PER, X_INV, Y_INV = 1, 1, 1, 1
 SCREEN_SIZE = img.size
+X_PER, Y_PER, X_INV, Y_INV = 1, 1, 1, 1
+X_INIT = SCREEN_SIZE[0] / 2 + SCREEN_SIZE[1] / 2 * .5
+Y_INIT = SCREEN_SIZE[1] / 2 + SCREEN_SIZE[1] / 2 * .5
 CUST_RES = SCREEN_SIZE
 log.info(f'Image "{IMG}" loaded and screen size set to {SCREEN_SIZE}.')
 
@@ -106,12 +108,10 @@ async def input_monitor():
     This is the main monitoring module used to map key presses and mouse movement to touch API events for the iDevice.
     """
     # Indicate starting/reset coordnates and thresholds by percentage for mouse movement
-    x_init = SCREEN_SIZE[0] / 2 + SCREEN_SIZE[1] / 2 * .5
-    x_perc = (.70, .20)
-    x = x_init
-    y_init = SCREEN_SIZE[1] / 2 + SCREEN_SIZE[1] / 2 * .5
+    x_perc = (.70, .30)
+    x = X_INIT
     y_perc = (.93, .50)
-    y = y_init
+    y = Y_INIT
     active = []
     pm, clicked = 0, 1
     pk = None
@@ -146,10 +146,10 @@ async def input_monitor():
             # It is required to flip "x" & "y" if viewing pygame display in landscape mode as the iPhone API always accepts coordinates in portrait.
             if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1]:
                 await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
-                x = x_init
+                x = X_INIT
             if float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
                 await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
-                y = y_init
+                y = Y_INIT
             # if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1] or float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
             #     await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
 
@@ -267,7 +267,7 @@ async def input_monitor():
                     await reset_fingers()
                 if event.key in {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
                     active.append(key)
-                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     await pressed_action(active)
                 try:
                     if event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
@@ -371,10 +371,14 @@ async def run():
     """
     # Initialze screen.
     s.send("252\r\n".encode())
+    
     # Reset touch on finger range.
     await reset_fingers()
 
     s.send("252\r\n".encode())
+
+    log.info(f"Setting FPS coordinates based on screen resolution.")
+    await SetConfig('FPS', f"{'%04d' % Y_INIT}0", f"{'%04d' % X_INIT}0")
     await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['FPS'][0]}", COORDS['FPS'][1], COORDS['FPS'][2])
 
     # Start scanning for input
@@ -388,10 +392,10 @@ async def SetConfig(key, x, y):
     # Change coord
     if key in COORDS:
         finger = COORDS[key][0]
-        log.info(f"Key '{key}' coords changed from {COORDS[key]} to {finger, x, y}")
+        log.info(f"Key '{key}' coords changed from {COORDS[key]} to {[finger, x, y]}")
     # Set new coord.
     else:
-        log.info(f"Key '{key}' coords added {finger, x, y}")
+        log.info(f"Key '{key}' coords added {[finger, x, y]}")
     COORDS[key] = [finger, x, y]
 
     log.debug(f"Coord changes: Finger: {finger}, Key: {key}, X:{x}, Y:{y}")
