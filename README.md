@@ -15,7 +15,7 @@ This is a client that maps keyboard/mouse functionality for any game.  You will 
 * No need to login to a website to run coordinate as this is stored locally to the script.
 * Buttons are already mapped and working for iPhone XR/11 (1792x828) resolution (see screenshot for working mappings).
 * Button programming and joystick centering mode available for your custom layout.
-* Fully working on OSX Big Sur, should also work on windows, but have not tested.
+* Fully working on OSX Big Sur, also tested on some windows platforms.
 * Will likely need to input device IP (127.0.0.1 did not work for me).
 
 ![layout](images/button_layout.png)
