@@ -82,3 +82,14 @@ python3 main.py <IP Address of device>
 
 ### I have issues installing package "uvloop" on windows.
 > This package is not required, but on systems that support it this will provide a performance gain in CPU tasks making the process smoother.
+
+
+## Feature Requests
+
+### Map the same button to multiple coordinates
+
+### Support any landscape rotation
+
+### Add ability to delete keys
+
+### Support custom FPS centers and aim movement without having to modify the `config.json` file.
