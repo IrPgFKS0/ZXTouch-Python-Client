@@ -145,11 +145,12 @@ async def input_monitor():
 
             # It is required to flip "x" & "y" if viewing pygame display in landscape mode as the iPhone API always accepts coordinates in portrait.
             if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1]:
-                await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
                 x = X_INIT
             if float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
-                await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
                 y = Y_INIT
+            if y == Y_INIT or x == X_INIT:
+                await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
+
             # if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1] or float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
             #     await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
 
@@ -381,6 +382,15 @@ async def run():
     await SetConfig('FPS', f"{'%04d' % Y_INIT}0", f"{'%04d' % X_INIT}0")
     await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['FPS'][0]}", COORDS['FPS'][1], COORDS['FPS'][2])
 
+    # Print the main welcome
+    print(f'Welcome to the CoDm ZXTouch Python Client v{__version__} Alpha!\n')
+    print('Press "l" to toggle input lock to window.')
+    print('Press "p" to toggle printing debug information including green coordinate dots on window image.')
+    print('Press "k" to change key mappings.')
+    print('Press "j" to change joystick center position.')
+    print('Press "esc" to reset all finger indices.')
+    print('Press "0" quit.')
+
     # Start scanning for input
     await input_monitor()
 
@@ -443,14 +453,6 @@ def create_aio_loop():
     """
     This main which will initialize the async event loop.
     """
-    print(f'Welcome to the CoDm ZXTouch Python Client v{__version__} Alpha!\n')
-    print('Press "l" to toggle input lock to window.')
-    print('Press "p" to toggle printing debug information including green coordinate dots on window image.')
-    print('Press "k" to change key mappings.')
-    print('Press "j" to change joystick center position.')
-    print('Press "esc" to reset all finger indices.')
-    print('Press "0" quit.')
-
     asyncio.run(run())
 
 
