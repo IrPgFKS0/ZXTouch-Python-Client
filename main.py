@@ -86,7 +86,7 @@ TOUCH_MOVE = '2'
 img=Image.open(IMG)
 SCREEN_SIZE = img.size
 X_PER, Y_PER, X_INV, Y_INV = 1, 1, 1, 1
-X_INIT = SCREEN_SIZE[0] / 2 + SCREEN_SIZE[1] / 2 * .5
+X_INIT = SCREEN_SIZE[0] / 1.9
 Y_INIT = SCREEN_SIZE[1] / 2 + SCREEN_SIZE[1] / 2 * .5
 CUST_RES = SCREEN_SIZE
 log.info(f'Image "{IMG}" loaded and screen size set to {SCREEN_SIZE}.')
@@ -149,20 +149,20 @@ async def input_monitor():
                     x = int(SCREEN_SIZE[0] * x_perc[0])
                 if float(x / SCREEN_SIZE[0]) <= x_perc[1]:
                     x = int(SCREEN_SIZE[0] * x_perc[1])
-                x = X_INIT
             if float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
                 if float(y / SCREEN_SIZE[1]) >= y_perc[0]:
                     y = int(SCREEN_SIZE[1] * y_perc[0])
                 if float(y / SCREEN_SIZE[1]) <= y_perc[1]:
                     y = int(SCREEN_SIZE[1] * y_perc[1])
-                y = Y_INIT
-            if y == Y_INIT or x == X_INIT:
+
+            if x in (int(SCREEN_SIZE[0] * x_perc[0]), int(SCREEN_SIZE[0] * x_perc[1])) or y in (int(SCREEN_SIZE[1] * y_perc[0]), int(SCREEN_SIZE[1] * y_perc[1])):
                 await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
+                # await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
+            if x in (int(SCREEN_SIZE[0] * x_perc[0]), int(SCREEN_SIZE[0] * x_perc[1])):
+                x = X_INIT
+            if y in (int(SCREEN_SIZE[1] * y_perc[0]), int(SCREEN_SIZE[1] * y_perc[1])):
+                y = Y_INIT
 
-
-
-            # if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1] or float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
-            #     await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
 
             # OR Direct coordinates (works with high sensitivity, but not recommended)
             # x = event.pos[0]
