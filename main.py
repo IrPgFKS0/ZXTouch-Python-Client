@@ -143,13 +143,23 @@ async def input_monitor():
             x += rotation_direction / SENSITIVITY
             y -= movement_direction / SENSITIVITY
 
-            # It is required to flip "x" & "y" if viewing pygame display in landscape mode as the iPhone API always accepts coordinates in portrait.
+            # It is required to flip "x" & "y" if viewing pygame display in landscape mode as the iPhone API always accepts coordinates in portrait (Changes credited by Discord user "Scatrmind").
             if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1]:
+                if float(x / SCREEN_SIZE[0]) >= x_perc[0]:
+                    x = int(SCREEN_SIZE[0] * x_perc[0])
+                if float(x / SCREEN_SIZE[0]) <= x_perc[1]:
+                    x = int(SCREEN_SIZE[0] * x_perc[1])
                 x = X_INIT
             if float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
+                if float(y / SCREEN_SIZE[1]) >= y_perc[0]:
+                    y = int(SCREEN_SIZE[1] * y_perc[0])
+                if float(y / SCREEN_SIZE[1]) <= y_perc[1]:
+                    y = int(SCREEN_SIZE[1] * y_perc[1])
                 y = Y_INIT
             if y == Y_INIT or x == X_INIT:
                 await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
+
+
 
             # if float(x / SCREEN_SIZE[0]) >= x_perc[0] or float(x / SCREEN_SIZE[0]) <= x_perc[1] or float(y / SCREEN_SIZE[1]) >= y_perc[0] or float(y / SCREEN_SIZE[1]) <= y_perc[1]:
             #     await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
