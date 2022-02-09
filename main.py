@@ -181,6 +181,7 @@ async def input_monitor():
                 key = mapped[event.button]
             except KeyError:
                 pass
+            key = f"BTN_{key}"
             log.debug(f"Current Mouse Button Pressed: {event.button} ({key})")
             log.debug(f"Mouse Clicked Screen Position (Portrait Coordinates): {(SCREEN_SIZE[1]-(event.pos[1] * Y_INV), event.pos[0] * X_INV)}")
 
@@ -201,6 +202,11 @@ async def input_monitor():
                 await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['LBTN'][0]}", COORDS['LBTN'][1], COORDS['LBTN'][2])
             elif event.button == 3:
                 await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['RBTN'][0]}", COORDS['RBTN'][1], COORDS['RBTN'][2])
+            elif key:
+                try:
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
+                except KeyError:
+                    pass
 
             # LBTN click tracker
             if pm and pk and event.button == 1:
@@ -208,11 +214,21 @@ async def input_monitor():
 
         # Called when a mouse button is released
         if not pm and event.type == pygame.MOUSEBUTTONUP:
+            key = event.button
+            try:
+                key = mapped[event.button]
+            except KeyError:
+                pass
+            key = f"BTN_{key}"
             if event.button == 1:
                 await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS['LBTN'][0]}", COORDS['LBTN'][1], COORDS['LBTN'][2])
             elif event.button == 3:
                 await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS['RBTN'][0]}", COORDS['RBTN'][1], COORDS['RBTN'][2])
-
+            elif key:
+                try:
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
+                except KeyError:
+                    pass
 
         # Called when a keyboard key is pressed
         if event.type == pygame.KEYDOWN:
