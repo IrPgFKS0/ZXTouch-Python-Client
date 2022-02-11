@@ -3,4 +3,4 @@ Pillow==8.4.0
 pygame==2.1.2
 PySimpleGUI==4.56.0
 ujson
-uvloop
+#uvloop	# Uncomment is running linux/Mac

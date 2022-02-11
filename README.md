@@ -29,9 +29,6 @@ cd /path/to/ZXtouch-CoDm-Client/
 2. **Install python dependencies.**
 ```bash
 pip install -r requirements.txt
-
-# On windows use
-pip install --no-deps -r requirements.txt
 ```
 
 3. **Make a new config file using the template provided**
