@@ -3,7 +3,7 @@ Requirements:
     1. pygame (Used for input capture)
     2. uvloop (speedy C module for Asyncio) - Could also try to run with `Pypy3`
 
-Kwown Issues:
+Known Issues:
     1. If you get a message about "ApplePersistenceIgnoreState" on OSX, use this command `defaults write org.python.python ApplePersistenceIgnoreState NO` to disable persistent state files.  Ref: https://stackoverflow.com/questions/18733965/annoying-message-when-opening-windows-from-python-on-os-x-10-8
     2. Still having issue with "WASD" movement lagging mouse movement, looking for feedback as I investigate further.
 """
@@ -20,7 +20,7 @@ from filelock import FileLock
 import PySimpleGUI as sg
 from PIL import Image
 
-# Supress SDL welcome prompt
+# Suppress SDL welcome prompt
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "1"
 environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
 import pygame
@@ -68,7 +68,7 @@ if not path.isfile(IMG):
             window.close()
             break
 
-SENSITIVITY = 1 # Leave CoDm sensitiity set to "low" for everything or adjust as necessary
+SENSITIVITY = 1 # Leave CoDm sensitivity set to "low" for everything or adjust as necessary
 MOVES = 4       # This is how many positions will be set when moving the joystick (min is 2)
 # Touch ID(s)
 TOUCH_TASK = '10'
@@ -82,7 +82,7 @@ MOUSE_FINGER = '01'
 TOUCH_UP = '0'
 TOUCH_DOWN = '1'
 TOUCH_MOVE = '2'
-# Set initial Coorinates and screen size for buttons and mouse operations.
+# Set initial Coordinates and screen size for buttons and mouse operations.
 img=Image.open(IMG)
 SCREEN_SIZE = img.size
 X_PER, Y_PER, X_INV, Y_INV = 1, 1, 1, 1
@@ -94,11 +94,11 @@ log.info(f'Image "{IMG}" loaded and screen size set to {SCREEN_SIZE}.')
 # Read config file, file format is ['FINGER_IDX', 'X', 'Y'] (remember these are portrait coordinates)
 COORDS = ujson.load(open(f'{CWD}{LOC}config.json'))
 
-# Verify config file loads succesfully
+# Verify config file loads successfully
 if COORDS:
     log.info('Config file loaded successfully from "config.json".')
 else:
-    log.error('Config file not loaded corectly, please check that "config.json" exists.')
+    log.error('Config file not loaded correctly, please check that "config.json" exists.')
     exit(1)
 
 
@@ -107,7 +107,7 @@ async def input_monitor():
     """
     This is the main monitoring module used to map key presses and mouse movement to touch API events for the iDevice.
     """
-    # Indicate starting/reset coordnates and thresholds by percentage for mouse movement
+    # Indicate starting/reset coordinates and thresholds by percentage for mouse movement
     x_perc = (.70, .30)
     x = X_INIT
     y_perc = (.93, .50)
@@ -175,7 +175,7 @@ async def input_monitor():
             # MOUSEBUTTONDOWN events have a pos and a button attribute
             # which you can use as well. This will be printed once per
             # event / mouse click.
-            # print coordnates in portrait mode for troubleshooting
+            # print coordinates in portrait mode for troubleshooting
             key = event.button
             try:
                 key = mapped[event.button]
@@ -294,7 +294,6 @@ async def input_monitor():
                     await reset_fingers()
                 if event.key in {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
                     active.append(key)
-                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     await pressed_action(active)
                 try:
                     if event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
@@ -316,8 +315,11 @@ async def input_monitor():
                 if active:
                     await pressed_action(active)
                 else:
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
+                    sleep(0.06)
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
-                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
+                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
 
 
 async def pressed_action(active):
@@ -337,7 +339,6 @@ async def pressed_action(active):
 
     key = '_'.join(sorted(active))
     log.debug(f"Active Key(s) Pressed: {key}")
-
     try:
         # it = iter(COORDS[key])
         # for y in it:
@@ -357,14 +358,14 @@ async def sender(key, data, x, y):
     """
     This is a helper module responsible for actually sending the socket data to the iDevice.
     """
-    # "x" and "y" coordinates always arive here for portrait mode.
+    # "x" and "y" coordinates always arrive here for portrait mode.
     await asyncio.sleep(0.003)
     s.send(f"{data}{x}{y}\r\n".encode())
 
     # Print the dots to the screen in landscape mode
     if log.getEffectiveLevel() == 10:
         if key is not None:
-            # print coordnates in portrait mode for troubleshooting
+            # print coordinates in portrait mode for troubleshooting
             log.debug(f"Sent to iDevice (Portrait Mode): {data}, {x}, {y}")
         await draw(1, key, (float(y)/10, SCREEN_SIZE[1]-float(x)/10), 5, (0, 255, 0))
 
@@ -388,15 +389,13 @@ async def reset_fingers():
     # Reset touch on finger range.
     for i in range(20):
         await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{'%02d' % i}", '1000', '01000')
-    await asyncio.sleep(0.01)
-    await sender('w', f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])
 
 
 async def run():
     """
-    This module is used to initialize touch on the iDevice and call the rest of the modules asyncrounously.
+    This module is used to initialize touch on the iDevice and call the rest of the modules asynchronously.
     """
-    # Initialze screen.
+    # Initialize screen.
     s.send("252\r\n".encode())
     
     # Reset touch on finger range.
@@ -491,7 +490,7 @@ if __name__ == '__main__':
     s.connect((DEVICE_IP, 6000))  # connect to the tweak
     sleep(0.2)  # please sleep after connection.
 
-    # initialising pygame
+    # initializing pygame
     pygame.init()
 
     # Creating display window taken screenshot (no login required)
