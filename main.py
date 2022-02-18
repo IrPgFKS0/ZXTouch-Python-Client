@@ -319,7 +319,7 @@ async def input_monitor():
                     sleep(0.06)
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
-                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
 
 
 async def pressed_action(active):
@@ -389,6 +389,9 @@ async def reset_fingers():
     # Reset touch on finger range.
     for i in range(20):
         await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{'%02d' % i}", '1000', '01000')
+    await asyncio.sleep(0.01)
+    await sender('w', f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])
+    await sender('w', f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
 
 
 async def run():
