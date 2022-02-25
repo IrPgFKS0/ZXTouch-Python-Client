@@ -180,8 +180,8 @@ async def input_monitor():
             try:
                 key = mapped[event.button]
             except KeyError:
-                pass
-            key = f"BTN_{key}"
+                key = f"BTN_{key}"
+
             log.debug(f"Current Mouse Button Pressed: {event.button} ({key})")
             log.debug(f"Mouse Clicked Screen Position (Portrait Coordinates): {(SCREEN_SIZE[1]-(event.pos[1] * Y_INV), event.pos[0] * X_INV)}")
 
@@ -316,9 +316,10 @@ async def input_monitor():
                     await pressed_action(active)
                 else:
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
-                    sleep(0.06)
+                    # sleep(0.06)
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
+                    # sleep(0.06)
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
 
 
