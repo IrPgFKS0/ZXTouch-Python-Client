@@ -16,6 +16,7 @@ import socket
 from time import sleep
 import asyncio
 import ujson
+import json
 from filelock import FileLock
 import PySimpleGUI as sg
 from PIL import Image
@@ -92,7 +93,7 @@ CUST_RES = SCREEN_SIZE
 log.info(f'Image "{IMG}" loaded and screen size set to {SCREEN_SIZE}.')
 
 # Read config file, file format is ['FINGER_IDX', 'X', 'Y'] (remember these are portrait coordinates)
-COORDS = ujson.load(open(f'{CWD}{LOC}config.json'))
+COORDS = json.load(open(f'{CWD}{LOC}config.json'))
 
 # Verify config file loads successfully
 if COORDS:
@@ -246,7 +247,11 @@ async def input_monitor():
                     pm = 1
                     await erase()
                     for key in COORDS:
-                        await draw(1, key, (float(COORDS[key][2])/10, SCREEN_SIZE[1]-float(COORDS[key][1])/10), 20, (0, 255, 0))
+                        if len(COORDS[key][0]) > 2:
+                            for coord in COORDS[key]:
+                                await draw(1, key, (float(coord[2])/10, SCREEN_SIZE[1]-float(coord[1])/10), 20, (0, 255, 0))
+                        else:
+                            await draw(1, key, (float(COORDS[key][2])/10, SCREEN_SIZE[1]-float(COORDS[key][1])/10), 20, (0, 255, 0))
             elif event.key == pygame.K_j:
                 if pm:
                     log.info('Exiting joystick program mode...')
@@ -294,10 +299,15 @@ async def input_monitor():
                     await reset_fingers()
                 if event.key in {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
                     active.append(key)
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])
                     await pressed_action(active)
                 try:
                     if event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
-                        await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
+                        if len(COORDS[key][0]) > 2:
+                            for coord in COORDS[key]:
+                                await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{coord[0]}", coord[1], coord[2])
+                        else:
+                            await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
                 except KeyError:
                     pass
 
@@ -306,7 +316,11 @@ async def input_monitor():
             key = pygame.key.name(event.key)
             try:
                 if event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
-                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
+                    if len(COORDS[key][0]) > 2:
+                        for coord in COORDS[key]:
+                            await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{coord[0]}", coord[1], coord[2])
+                    else:
+                        await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
             except KeyError:
                 pass
             if event.key in {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
@@ -316,10 +330,7 @@ async def input_monitor():
                     await pressed_action(active)
                 else:
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
-                    # sleep(0.06)
-                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
-                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
-                    # sleep(0.06)
+                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
 
 
@@ -431,11 +442,18 @@ async def SetConfig(key, x, y):
     # Change coord
     if key in COORDS:
         finger = COORDS[key][0]
+        if isinstance(COORDS[key][0], list):
+            finger = COORDS[key][0][0]
         log.info(f"Key '{key}' coords changed from {COORDS[key]} to {[finger, x, y]}")
     # Set new coord.
     else:
         log.info(f"Key '{key}' coords added {[finger, x, y]}")
-    COORDS[key] = [finger, x, y]
+    if key in COORDS and key not in ('FPS', 'LBTN', 'RBTN', 'J_CENTER'):
+        if not isinstance(COORDS[key][0], list):
+            COORDS[key] = [[x for x in COORDS[key]]]
+        COORDS[key].append([finger, x, y])
+    else:
+        COORDS[key] = [finger, x, y]
 
     log.debug(f"Coord changes: Finger: {finger}, Key: {key}, X:{x}, Y:{y}")
 
