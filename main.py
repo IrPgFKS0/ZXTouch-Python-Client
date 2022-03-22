@@ -299,12 +299,13 @@ async def input_monitor():
                     await reset_fingers()
                 if event.key in {pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
                     active.append(key)
-                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])
+                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])
                     await pressed_action(active)
                 try:
                     if event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
                         if len(COORDS[key][0]) > 2:
                             for coord in COORDS[key]:
+                                sleep(0.03)
                                 await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{coord[0]}", coord[1], coord[2])
                         else:
                             await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
@@ -318,6 +319,7 @@ async def input_monitor():
                 if event.key not in {pygame.K_k, pygame.K_j, pygame.K_l, pygame.K_p, pygame.K_0, pygame.K_ESCAPE, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d}:
                     if len(COORDS[key][0]) > 2:
                         for coord in COORDS[key]:
+                            sleep(0.06)
                             await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{coord[0]}", coord[1], coord[2])
                     else:
                         await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2])
@@ -330,7 +332,7 @@ async def input_monitor():
                     await pressed_action(active)
                 else:
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{COORDS[key][0]}", COORDS[key][1], COORDS[key][2]) # This will be the final coords of the pressed key
-                    # await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
+                    await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Worked better when only one touch down event was set on start/reset (ESCAPE).
                     await sender(key, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_MOVE}{COORDS['J_CENTER'][0]}", COORDS['J_CENTER'][1], COORDS['J_CENTER'][2])  # Seemed to work better for CoDm
 
 
