@@ -156,12 +156,12 @@ async def input_monitor():
                 if float(y / SCREEN_SIZE[1]) <= y_perc[1]:
                     y = int(SCREEN_SIZE[1] * y_perc[1])
 
-            if x in (int(SCREEN_SIZE[0] * x_perc[0]), int(SCREEN_SIZE[0] * x_perc[1])) or y in (int(SCREEN_SIZE[1] * y_perc[0]), int(SCREEN_SIZE[1] * y_perc[1])):
+            x_at_boundary = x in (int(SCREEN_SIZE[0] * x_perc[0]), int(SCREEN_SIZE[0] * x_perc[1]))
+            y_at_boundary = y in (int(SCREEN_SIZE[1] * y_perc[0]), int(SCREEN_SIZE[1] * y_perc[1]))
+            if x_at_boundary or y_at_boundary:
                 await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_UP}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
                 # await sender(None, f"{TOUCH_TASK}{SINGLE_EVENT}{TOUCH_DOWN}{MOUSE_FINGER}", f"{'%04d' % y}0", f"{'%04d' % x}0")
-            if x in (int(SCREEN_SIZE[0] * x_perc[0]), int(SCREEN_SIZE[0] * x_perc[1])):
                 x = X_INIT
-            if y in (int(SCREEN_SIZE[1] * y_perc[0]), int(SCREEN_SIZE[1] * y_perc[1])):
                 y = Y_INIT
 
 
