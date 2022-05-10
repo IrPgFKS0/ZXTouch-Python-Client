@@ -88,7 +88,7 @@ img=Image.open(IMG)
 SCREEN_SIZE = img.size
 X_PER, Y_PER, X_INV, Y_INV = 1, 1, 1, 1
 X_INIT = SCREEN_SIZE[0] / 1.9
-Y_INIT = SCREEN_SIZE[1] / 2 + SCREEN_SIZE[1] / 2 * .5
+Y_INIT = SCREEN_SIZE[1] * 0.75
 CUST_RES = SCREEN_SIZE
 log.info(f'Image "{IMG}" loaded and screen size set to {SCREEN_SIZE}.')
 
